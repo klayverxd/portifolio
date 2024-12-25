@@ -31,18 +31,18 @@ export default function Home() {
 					trigger: mountain3Ref.current,
 					start: "bottom bottom",
 					end: "bottom top",
-					scrub: true
-				}
+					scrub: true,
+				},
 			});
 
 			gsap.to(moonRef.current, {
 				y: 550,
 				scrollTrigger: {
-					trigger: moonRef.current,
+					trigger: mountain3Ref.current,
 					start: "bottom bottom",
 					end: "bottom top",
-					scrub: true
-				}
+					scrub: true,
+				},
 			});
 			gsap.to(mountain3Ref.current, {
 				y: 350,
@@ -50,8 +50,8 @@ export default function Home() {
 					trigger: mountain3Ref.current,
 					start: "bottom bottom",
 					end: "bottom top",
-					scrub: true
-				}
+					scrub: true,
+				},
 			});
 			gsap.to(mountain2Ref.current, {
 				y: 180,
@@ -59,8 +59,8 @@ export default function Home() {
 					trigger: mountain2Ref.current,
 					start: "bottom bottom",
 					end: "bottom top",
-					scrub: true
-				}
+					scrub: true,
+				},
 			});
 			gsap.to(mountain1Ref.current, {
 				y: 50,
@@ -68,8 +68,8 @@ export default function Home() {
 					trigger: mountain1Ref.current,
 					start: "bottom bottom",
 					end: "bottom top",
-					scrub: true
-				}
+					scrub: true,
+				},
 			});
 			gsap.to(textRef.current, {
 				y: 10,
@@ -77,17 +77,8 @@ export default function Home() {
 					trigger: mountain3Ref.current,
 					start: "bottom bottom",
 					end: "top top",
-					scrub: true
-				}
-			});
-			gsap.to(moonRef.current, {
-				y: 10,
-				scrollTrigger: {
-					trigger: mountain3Ref.current,
-					start: "bottom bottom",
-					end: "top top",
-					scrub: true
-				}
+					scrub: true,
+				},
 			});
 		},
 		{ scope: containerRef }
@@ -99,7 +90,7 @@ export default function Home() {
 				ref={containerRef}
 				className="relative h-screen overflow-hidden "
 				style={{
-					background: "linear-gradient(0deg, #030016 5%, #efefef 100%)"
+					background: "linear-gradient(0deg, #030016 5%, #efefef 100%)",
 				}}
 			>
 				<header ref={navigationRef} className="w-screen mt-6">
@@ -112,14 +103,14 @@ export default function Home() {
 					</nav>
 				</header>
 
+				<div ref={moonRef} className="absolute right-1/4 top-1/4">
+					<img src="/images/parallax/moon.png" alt="" />
+				</div>
+
 				<div
 					ref={mountain3Ref}
 					className="absolute bottom-0 align-bottom w-screen"
 				>
-					<div ref={moonRef} className="absolute ">
-						<img src="/images/parallax/moon.png" alt="" />
-					</div>
-
 					<h1
 						ref={textRef}
 						className="text font-bold text-9xl w-screen mt-64 text-slate-950 absolute text-center"
