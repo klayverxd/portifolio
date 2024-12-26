@@ -109,14 +109,17 @@ export default function Home() {
 
 				<div
 					ref={mountain3Ref}
-					className="absolute bottom-0 align-bottom w-screen"
+					className="absolute bottom-0 align-bottom w-screen flex justify-center"
 				>
-					<h1
+					<div
 						ref={textRef}
-						className="text font-bold text-9xl w-screen mt-64 text-slate-950 absolute text-center"
+						className="absolute font-koulen mt-48 text-slate-950"
 					>
-						KLAYVER
-					</h1>
+						<p className="text-2xl text-center flex items-start ml-2">
+							&#60;HELLO, I'M&#62;
+						</p>
+						<p className="text-[200px] text-center leading-[146px]">KLAYVER</p>
+					</div>
 
 					<img src="/images/parallax/mountain3.png" alt="" />
 					{/* <Mountain3 /> */}

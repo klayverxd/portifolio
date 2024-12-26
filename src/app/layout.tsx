@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Koulen } from "next/font/google";
 
 import "./globals.css";
+
+const koulenRegular = Koulen({
+	variable: "--font-koulen-regular",
+	subsets: ["latin"],
+	weight: "400",
+});
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -26,7 +32,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="scroll-smooth">
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+				className={`${geistSans.variable} ${geistMono.variable} ${koulenRegular.variable} antialiased`}
 			>
 				{children}
 			</body>
