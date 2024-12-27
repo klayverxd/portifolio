@@ -8,7 +8,9 @@ import Mountain1 from "./components/Icons/Mountain1";
 import Mountain2 from "./components/Icons/Mountain2";
 import Mountain3 from "./components/Icons/Mountain3";
 import Moon from "./components/Icons/Moon";
-import Link from "next/link";
+import { Model } from "./components/Models/Model";
+import { Canvas } from "@react-three/fiber";
+import { Environment, OrbitControls } from "@react-three/drei";
 
 export default function Home() {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -95,7 +97,6 @@ export default function Home() {
 			>
 				<header ref={navigationRef} className="w-screen mt-6">
 					<nav className="flex justify-center gap-6 text-slate-950 mt-6 flex-wrap">
-						<a href="#home">home</a>
 						<a href="#about">about</a>
 						<a href="#experience">experience</a>
 						<a href="#projects">projects</a>
@@ -129,6 +130,7 @@ export default function Home() {
 					<img src="/images/parallax/mountain2.png" alt="" />
 					{/* <Mountain2 /> */}
 				</div>
+
 				<div ref={mountain1Ref} className="absolute bottom-0 w-screen">
 					<img src="/images/parallax/mountain1.png" alt="" />
 					{/* <Mountain1 /> */}
@@ -136,22 +138,22 @@ export default function Home() {
 			</div>
 
 			<div
-				id="home"
-				className="h-screen bg-[#030016] flex justify-center items-center border-2 border-[#EFEFEF]"
-			>
-				<h1 className="font-bold text-9xl text-slate-200 text-center">HOME</h1>
-			</div>
-
-			<div
 				id="about"
-				className="h-screen bg-[#030016] flex justify-center items-center border-2 border-[#EFEFEF]"
+				className="h-screen bg-[#030016] flex justify-center items-center"
 			>
-				<h1 className="font-bold text-9xl text-slate-200 text-center">ABOUT</h1>
+				<Canvas
+					orthographic
+					camera={{ position: [0, 0, 300] }}
+				>
+					<OrbitControls />
+					<Model />
+					<Environment preset="studio" />
+				</Canvas>
 			</div>
 
 			<div
 				id="experience"
-				className="h-screen bg-[#030016] flex justify-center items-center border-2 border-[#EFEFEF]"
+				className="h-screen bg-[#030016] flex justify-center items-center"
 			>
 				<h1 className="font-bold text-9xl text-slate-200 text-center">
 					EXPERIENCE
@@ -160,7 +162,7 @@ export default function Home() {
 
 			<div
 				id="projects"
-				className="h-screen bg-[#030016] flex justify-center items-center border-2 border-[#EFEFEF]"
+				className="h-screen bg-[#030016] flex justify-center items-center"
 			>
 				<h1 className="font-bold text-9xl text-slate-200 text-center">
 					PROJECTS
@@ -169,7 +171,7 @@ export default function Home() {
 
 			<div
 				id="contact"
-				className="h-screen bg-[#030016] flex justify-center items-center border-2 border-[#EFEFEF]"
+				className="h-screen bg-[#030016] flex justify-center items-center"
 			>
 				<h1 className="font-bold text-9xl text-slate-200 text-center">
 					CONTACT
