@@ -11,6 +11,7 @@ import Moon from "./components/Icons/Moon";
 import { Model } from "./components/Models/Model";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
+import Tecnologies from "./components/tecnologies/tecnologies";
 
 export default function Home() {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -141,10 +142,7 @@ export default function Home() {
 				id="about"
 				className="h-screen bg-[#030016] flex justify-center items-center"
 			>
-				<Canvas
-					orthographic
-					camera={{ position: [0, 0, 300] }}
-				>
+				<Canvas orthographic camera={{ position: [0, 0, 300] }}>
 					<OrbitControls />
 					<Model />
 					<Environment preset="studio" />
@@ -155,9 +153,7 @@ export default function Home() {
 				id="experience"
 				className="h-screen bg-[#030016] flex justify-center items-center"
 			>
-				<h1 className="font-bold text-9xl text-slate-200 text-center">
-					EXPERIENCE
-				</h1>
+				<Tecnologies />
 			</div>
 
 			<div
