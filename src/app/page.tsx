@@ -12,6 +12,7 @@ import { Model } from "./components/Models/Model";
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 import Tecnologies from "./components/tecnologies/tecnologies";
+import About from "./components/about/about";
 
 export default function Home() {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -140,13 +141,19 @@ export default function Home() {
 
 			<div
 				id="about"
-				className="h-screen bg-[#030016] flex justify-center items-center"
+				className="bg-[#030016] flex flex-col justify-center items-center p-12 sm:md:flex-row"
 			>
-				<Canvas orthographic camera={{ position: [0, 0, 300] }}>
-					<OrbitControls />
-					<Model />
-					<Environment preset="studio" />
-				</Canvas>
+				<div className="w-full sm:md:w-2/5 sm:md:h-1/2">
+					<Canvas orthographic camera={{ position: [0, 0, 300] }}>
+						<OrbitControls />
+						<Model />
+						<Environment preset="studio" />
+					</Canvas>
+				</div>
+
+				<div className="w-full h-full sm:md:w-3/5">
+					<About paragraph="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in leo pretium, convallis ante eget, maximus est. Suspendisse dapibus odio felis, vel blandit tortor tristique at. Suspendisse hendrerit, mauris eu pulvinar hendrerit, enim purus pulvinar velit, nec tincidunt est tellus eleifend tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt placerat euismod. Vestibulum quis est egestas, finibus massa eget, aliquam leo. Etiam lacinia pulvinar diam. Ut quis molestie felis, quis semper ipsum. Fusce aliquet massa ornare lectus pellentesque varius. Ut vestibulum augue ultrices lectus venenatis luctus. Donec ipsum sapien, lacinia ut elementum eu, pretium vitae est. Vestibulum fermentum odio tristique pretium laoreet. Proin at lorem at urna aliquam aliquam. In fringilla est aliquet tempus varius. Pellentesque fringilla sed tellus eu sodales." />
+				</div>
 			</div>
 
 			<div
@@ -160,7 +167,7 @@ export default function Home() {
 				id="projects"
 				className="h-screen bg-[#030016] flex justify-center items-center"
 			>
-				<h1 className="font-bold text-9xl text-slate-200 text-center">
+				<h1 className="font-bold text-3xl sm:md:text-9xl text-wrap text-slate-200 text-center">
 					PROJECTS
 				</h1>
 			</div>
@@ -169,7 +176,7 @@ export default function Home() {
 				id="contact"
 				className="h-screen bg-[#030016] flex justify-center items-center"
 			>
-				<h1 className="font-bold text-9xl text-slate-200 text-center">
+				<h1 className="font-bold text-3xl sm:md:text-9xl text-slate-200 text-center">
 					CONTACT
 				</h1>
 			</div>
