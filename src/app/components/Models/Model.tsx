@@ -7,8 +7,9 @@ Title: Rubber duck
 */
 
 import * as THREE from "three";
-import React, { useRef } from "react";
-import { Float, useGLTF } from "@react-three/drei";
+import React, { useEffect, useRef } from "react";
+import { useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import { GLTF } from "three-stdlib";
 
 type GLTFResult = GLTF & {
@@ -22,24 +23,52 @@ type GLTFResult = GLTF & {
 
 export function Model(props: JSX.IntrinsicElements["group"]) {
 	const { nodes, materials } = useGLTF("/models/rubber_duck.glb") as GLTFResult;
+
+	const modelRef = useRef<THREE.Group>(null);
+
+	const mouse = useRef(new THREE.Vector2());
+	const targetPosition = new THREE.Vector3();
+	const smoothedPosition = new THREE.Vector3();
+
+	useEffect(() => {
+		const handleMouseMove = (event: MouseEvent) => {
+			mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+			mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+		};
+
+		window.addEventListener("mousemove", handleMouseMove);
+
+		return () => {
+			window.removeEventListener("mousemove", handleMouseMove);
+		};
+	}, []);
+
+	useFrame(({ camera }) => {
+		if (modelRef.current) {
+			const raycaster = new THREE.Raycaster();
+			raycaster.setFromCamera(mouse.current, camera);
+
+			const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -10);
+			raycaster.ray.intersectPlane(plane, targetPosition);
+
+			smoothedPosition.lerp(targetPosition, 0.1);
+
+			modelRef.current.lookAt(smoothedPosition);
+		}
+	});
+
 	return (
-		<Float rotationIntensity={2}>
-			<group {...props} dispose={null}>
-				<group rotation={[-Math.PI / 2, 0, 0]}>
-					<group rotation={[Math.PI / 2, 0, 0]}>
-						<mesh
-							castShadow
-							receiveShadow
-							geometry={nodes.defaultMaterial.geometry}
-							material={materials.material}
-							position={[0, 173.286, -2.915]}
-							rotation={[-Math.PI / 2, 0, 0]}
-							scale={[0.901, 1.086, 1.022]}
-						/>
-					</group>
-				</group>
-			</group>
-		</Float>
+		<group ref={modelRef} {...props} dispose={null} position={[120, -100, -250]}>
+			<mesh
+				castShadow
+				receiveShadow
+				geometry={nodes.defaultMaterial.geometry}
+				material={materials.material}
+				position={[0, 95, 0]}
+				rotation={[-Math.PI / 2, -.05, 0.3]}
+				scale={[0.901, 1.086, 1.022]}
+			/>
+		</group>
 	);
 }
 

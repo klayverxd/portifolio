@@ -141,17 +141,16 @@ export default function Home() {
 
 			<div
 				id="about"
-				className="bg-[#030016] flex flex-col justify-center items-center p-12 sm:md:flex-row"
+				className="h-screen bg-[#030016] flex flex-col justify-center items-center p-12 sm:md:flex-row"
 			>
-				<div className="w-full sm:md:w-2/5 sm:md:h-1/2">
-					<Canvas orthographic camera={{ position: [0, 0, 300] }}>
-						<OrbitControls />
+				<div className="w-full h-1/2 sm:md:w-2/5 sm:md:h-full">
+					<Canvas orthographic camera={{ position: [0, 0, 0] }}>
 						<Model />
 						<Environment preset="studio" />
 					</Canvas>
 				</div>
 
-				<div className="w-full h-full sm:md:w-3/5">
+				<div className="w-full h-full sm:md:w-3/5 flex justify-center items-center">
 					<About paragraph="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in leo pretium, convallis ante eget, maximus est. Suspendisse dapibus odio felis, vel blandit tortor tristique at. Suspendisse hendrerit, mauris eu pulvinar hendrerit, enim purus pulvinar velit, nec tincidunt est tellus eleifend tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt placerat euismod. Vestibulum quis est egestas, finibus massa eget, aliquam leo. Etiam lacinia pulvinar diam. Ut quis molestie felis, quis semper ipsum. Fusce aliquet massa ornare lectus pellentesque varius. Ut vestibulum augue ultrices lectus venenatis luctus. Donec ipsum sapien, lacinia ut elementum eu, pretium vitae est. Vestibulum fermentum odio tristique pretium laoreet. Proin at lorem at urna aliquam aliquam. In fringilla est aliquet tempus varius. Pellentesque fringilla sed tellus eu sodales." />
 				</div>
 			</div>
