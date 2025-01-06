@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/topic",
+      "destination": "https://topic-coreau.vercel.app"
+    }
+  ]
+}
