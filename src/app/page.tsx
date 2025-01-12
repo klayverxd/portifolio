@@ -13,6 +13,7 @@ import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 import Tecnologies from "./components/tecnologies/tecnologies";
 import About from "./components/about/about";
+import Projects from "./components/projects/projects";
 
 export default function Home() {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -166,14 +167,12 @@ export default function Home() {
 				id="projects"
 				className="h-screen bg-[#030016] flex justify-center items-center"
 			>
-				<h1 className="font-bold text-3xl sm:md:text-9xl text-wrap text-slate-200 text-center">
-					PROJECTS
-				</h1>
+				<Projects />
 			</div>
 
 			<div
 				id="contact"
-				className="h-screen bg-[#030016] flex justify-center items-center"
+				className="mt-[170vh] h-screen bg-[#030016] flex justify-center items-center"
 			>
 				<h1 className="font-bold text-3xl sm:md:text-9xl text-slate-200 text-center">
 					CONTACT
