@@ -14,7 +14,7 @@ import { Environment, OrbitControls } from "@react-three/drei";
 import Tecnologies from "./components/tecnologies/tecnologies";
 import About from "./components/about/about";
 import Projects from "./components/projects/projects";
-import BB8Model from "./components/Models/BB8Model";
+import BB8AnimatedModel from "./components/Models/BB8AnimatedModel";
 
 export default function Home() {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -147,8 +147,8 @@ export default function Home() {
 			>
 				<div className="w-full h-1/2 sm:md:w-2/5 sm:md:h-full">
 					<Canvas orthographic camera={{ position: [0, 100, 500] }}>
-						<BB8Model />
-						<Environment preset="studio" />
+						<BB8AnimatedModel />
+						<Environment preset="forest" />
 					</Canvas>
 				</div>
 
