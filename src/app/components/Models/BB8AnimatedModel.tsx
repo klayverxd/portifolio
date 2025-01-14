@@ -28,7 +28,6 @@ export default function BB8AnimatedModel(
 	const { nodes, materials, animations } = useGLTF(
 		"/models/bb8_animated.glb"
 	) as GLTFResult;
-	console.info(`🪲 ~ animations: `, animations);
 	const { actions } = useAnimations<THREE.AnimationClip>(animations, group);
 
 	const headRef = useRef<THREE.Group>(null);
