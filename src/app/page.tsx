@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -16,7 +16,15 @@ import About from "./components/about/about";
 import Projects from "./components/projects/projects";
 import BB8AnimatedModel from "./components/Models/BB8AnimatedModel";
 
+import "../lib/i18n";
+import { useTranslation } from "react-i18next";
+
 export default function Home() {
+	const {
+		t,
+		i18n: { changeLanguage },
+	} = useTranslation();
+
 	const containerRef = useRef<HTMLDivElement>(null);
 	const navigationRef = useRef<HTMLDivElement>(null);
 	const moonRef = useRef<HTMLDivElement>(null);
@@ -24,6 +32,10 @@ export default function Home() {
 	const mountain2Ref = useRef<HTMLDivElement>(null);
 	const mountain3Ref = useRef<HTMLDivElement>(null);
 	const textRef = useRef<HTMLDivElement>(null);
+
+	function handleLanguageChange(lang: string) {
+		changeLanguage(lang);
+	}
 
 	if (typeof window !== "undefined") {
 		gsap.registerPlugin(ScrollTrigger);
@@ -99,13 +111,35 @@ export default function Home() {
 					background: "linear-gradient(0deg, #030016 5%, #efefef 100%)",
 				}}
 			>
-				<header ref={navigationRef} className="w-screen mt-6">
-					<nav className="flex justify-center gap-6 text-slate-950 mt-6 flex-wrap">
-						<a href="#about">about</a>
-						<a href="#experience">experience</a>
-						<a href="#projects">projects</a>
-						<a href="#contact">contact</a>
-					</nav>
+				<header
+					ref={navigationRef}
+					className="flex w-full mt-6 items-center px-6"
+				>
+					<div className="flex-1 flex justify-center">
+						<nav className="flex gap-6 text-slate-950 flex-wrap">
+							<a href="#about">{t("header.about")}</a>
+							<a href="#experience">{t("header.experience")}</a>
+							<a href="#projects">{t("header.projects")}</a>
+							<a href="#contact">{t("header.contact")}</a>
+						</nav>
+					</div>
+
+					<div className="flex gap-2">
+						<button
+							onClick={() => handleLanguageChange("pt")}
+							className="text-slate-950"
+						>
+							pt
+						</button>
+						<span className="px-1 text-slate-950">|</span>
+
+						<button
+							onClick={() => handleLanguageChange("en")}
+							className="text-slate-950"
+						>
+							en
+						</button>
+					</div>
 				</header>
 
 				<div ref={moonRef} className="absolute right-1/4 top-1/4">
@@ -121,7 +155,7 @@ export default function Home() {
 						className="absolute font-koulen mt-48 text-slate-950"
 					>
 						<p className="text-2xl text-center flex items-start ml-2">
-							&#60;HELLO, I'M&#62;
+							&#60;{t("parallax.greetings")}&#62;
 						</p>
 						<p className="text-[200px] text-center leading-[146px]">KLAYVER</p>
 					</div>

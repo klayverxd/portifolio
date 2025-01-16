@@ -1,0 +1,13 @@
+{
+	"translation": {
+		"header": {
+			"about": "sobre",
+			"experience": "experiência",
+			"projects": "projetos",
+			"contact": "contato"
+		},
+    "parallax": {
+			"greetings": "OI, ME CHAMO"
+		}
+	}
+}
