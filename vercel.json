@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/topic",
-      "destination": "https://topic-coreau.vercel.app"
+      "source": "/topic:match(*)",
+      "destination": "https://topic-coreau.vercel.app:match"
     }
   ]
 }
