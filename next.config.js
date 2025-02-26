@@ -1,12 +1,5 @@
 const nextConfig = {
-	images: {
-		remotePatterns: [
-			{
-				protocol: "https",
-				hostname: "topic-coreau.vercel.app",
-			},
-		],
-	},
+  /* config options here */
 };
 
 export default nextConfig;
