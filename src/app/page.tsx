@@ -121,6 +121,7 @@ export default function Home() {
 							<a href="#experience">{t("header.experience")}</a>
 							<a href="#projects">{t("header.projects")}</a>
 							<a href="#contact">{t("header.contact")}</a>
+							<a href="https://blog.klayver.dev" target="_blank">{t("header.blog")}</a>
 						</nav>
 					</div>
 

@@ -4,7 +4,8 @@
 			"about": "about",
 			"experience": "experience",
 			"projects": "projects",
-			"contact": "contact"
+			"contact": "contact",
+			"blog": "blog"
 		},
 		"parallax": {
 			"greetings": "HELLO, I'M"
