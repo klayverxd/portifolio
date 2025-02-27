@@ -121,7 +121,9 @@ export default function Home() {
 							<a href="#experience">{t("header.experience")}</a>
 							<a href="#projects">{t("header.projects")}</a>
 							<a href="#contact">{t("header.contact")}</a>
-							<a href="https://blog.klayver.dev" target="_blank">{t("header.blog")}</a>
+							<a href="https://blog.klayver.dev" target="_blank">
+								{t("header.blog")}
+							</a>
 						</nav>
 					</div>
 
@@ -161,17 +163,17 @@ export default function Home() {
 						<p className="text-[200px] text-center leading-[146px]">KLAYVER</p>
 					</div>
 
-					<img src="/images/parallax/mountain3.png" alt="" />
+					<img src="/images/parallax/mountain3.png" alt="" className="w-full" />
 					{/* <Mountain3 /> */}
 				</div>
 
 				<div ref={mountain2Ref} className="absolute bottom-0 w-screen">
-					<img src="/images/parallax/mountain2.png" alt="" />
+					<img src="/images/parallax/mountain2.png" alt="" className="w-full" />
 					{/* <Mountain2 /> */}
 				</div>
 
 				<div ref={mountain1Ref} className="absolute bottom-0 w-screen">
-					<img src="/images/parallax/mountain1.png" alt="" />
+					<img src="/images/parallax/mountain1.png" alt="" className="w-full" />
 					{/* <Mountain1 /> */}
 				</div>
 			</div>
@@ -208,7 +210,7 @@ export default function Home() {
 
 			<div
 				id="contact"
-				className="mt-[170vh] h-screen bg-[#030016] flex justify-center items-center"
+				className="mt-[470vh] h-screen bg-[#030016] flex justify-center items-center"
 			>
 				<h1 className="font-bold text-3xl sm:md:text-9xl text-slate-200 text-center">
 					CONTACT
