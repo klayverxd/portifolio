@@ -210,7 +210,7 @@ export default function Home() {
 
 			<div
 				id="contact"
-				className="mt-[470vh] h-screen bg-[#030016] flex justify-center items-center"
+				className="mt-[600vh] h-screen bg-[#030016] flex justify-center items-center"
 			>
 				<h1 className="font-bold text-3xl sm:md:text-9xl text-slate-200 text-center">
 					CONTACT

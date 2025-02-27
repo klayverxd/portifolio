@@ -13,7 +13,7 @@ export default function Projects() {
 	});
 
 	return (
-		<div className="relative mt-[350vh] bg-[#030016] w-full">
+		<div className="relative mt-[600vh] bg-[#030016] w-full">
 			{projects.map((project, i) => {
 				const targetScale = 1 - (projects.length - i) * 0.05;
 
