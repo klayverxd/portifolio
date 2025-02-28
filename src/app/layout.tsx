@@ -21,6 +21,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
+			<head>
+				<script defer src="https://cloud.umami.is/script.js" data-website-id="62fda81a-04be-4942-9ae1-c578f543050a"></script>
+			</head>
 			<body
 				className={`${koulenRegular.variable} antialiased`}
 			>
