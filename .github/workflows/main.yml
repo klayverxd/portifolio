@@ -32,8 +32,8 @@ jobs:
         run: |
           # Create the .ssh folder & set proper permissions
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/rsa
-          chmod 600 ~/.ssh/rsa
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
           # Add Bitbucket to known_hosts (prevents host‑verification prompt)
           ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
