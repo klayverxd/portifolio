@@ -45,9 +45,7 @@ jobs:
           else
             echo "🆕 Criando branch órfã new-main..."
             git checkout --orphan new-main
-            git rm -rf . || true
-            echo "# new-main (inicial órfã)" > README.md
-            git add README.md
+            git add .
             git commit -m "Initial orphan branch new-main"
             git push -u origin new-main
           fi
