@@ -1,0 +1,122 @@
+name: Teste workflow
+
+# -----------------------------------------------------
+# 1️⃣  Run when a tag matching "v*" is created / pushed
+# -----------------------------------------------------
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versão da release"
+        required: false
+
+jobs:
+  sync-to-bitbucket:
+    runs-on: ubuntu-latest
+
+    steps:
+      # -------------------------------------------------
+      # 2️⃣  Checkout the repository (source code)
+      # -------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # fetch full history – needed for tags
+
+      # -------------------------------------------------
+      # 3️⃣  Remove the files you don't want to push
+      # -------------------------------------------------
+      - name: Remove unwanted files
+        run: |
+          rm -rf ./aplicativo/logcsh.txt
+          rm -rf ./aplicativo/mv_apk
+          rm -rf ./aplicativo/push-foreground-ios.txt
+          rm -rf ./aplicativo/ios-release.bundle
+          rm -rf ./aplicativo/ios-release.bundle.map
+          rm -rf ./aplicativo/android-release.bundle
+          rm -rf ./aplicativo/android-release.bundle.map
+          rm -rf ./aplicativo/android_build
+          rm -rf ./aplicativo/generate-app-hash.sh
+          rm -rf ./aplicativo/generate_app_hash_to_otp
+          rm -rf ./aplicativo/patches
+          rm -rf ./aplicativo/ios/BackgroundFetchManager.h
+          rm -rf ./aplicativo/ios/BackgroundFetchManager.m
+          rm -rf ./aplicativo/ios/Podfile.old
+
+      # -------------------------------------------------
+      # 4️⃣  Set up SSH for the Bitbucket remote
+      # -------------------------------------------------
+      - name: Add SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.BITBUCKET_SSH_PRIVATE_KEY }}
+        run: |
+          # Create the .ssh folder & set proper permissions
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          # Add Bitbucket to known_hosts (prevents host‑verification prompt)
+          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+
+      # -------------------------------------------------
+      # 5️⃣  Create a fresh repository with a single commit
+      # -------------------------------------------------
+      - name: Push to Bitbucket as single commit
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
+        run: |
+          # -----------------------------------------------------------------
+          # Save the tag name that triggered this workflow (GitHub provides it)
+          # -----------------------------------------------------------------
+          TAG_NAME="${{ github.ref_name }}"
+
+          # -----------------------------------------------------------------
+          # Create a temporary directory that will become the clean repo
+          # -----------------------------------------------------------------
+          TEMP_DIR=$(mktemp -d)
+
+          # Copy everything **except** the .git folder
+          rsync -av --exclude='.git' ./ "$TEMP_DIR/"
+
+          # -----------------------------------------------------------------
+          # Initialise a fresh git repo in the temporary folder
+          # -----------------------------------------------------------------
+          cd "$TEMP_DIR"
+          git init
+
+          # Configure the commit author (same values you used before)
+          git config user.name "$GIT_AUTHOR_NAME"
+          git config user.email "$GIT_AUTHOR_EMAIL"
+
+          # -----------------------------------------------------------------
+          # Add the Bitbucket remote (SSH URL)
+          # -----------------------------------------------------------------
+          # Replace <workspace>/<repo>.git with your actual Bitbucket path
+          git remote add git@github.com:klayverxd/portifolio.git
+
+          # -----------------------------------------------------------------
+          # Commit everything in one go
+          # -----------------------------------------------------------------
+          git add -A
+          git commit -m "Release ${TAG_NAME}"
+
+          # Tag the commit
+          git tag "${TAG_NAME}"
+
+          # Set the default branch name (main) – required before the first push
+          git branch -M main
+
+          # -----------------------------------------------------------------
+          # Force‑push the single‑commit history and the tag to Bitbucket
+          # -----------------------------------------------------------------
+          git push main --force
+          git push "${TAG_NAME}" --force
+
+          # -----------------------------------------------------------------
+          # Clean up temporary folder
+          # -----------------------------------------------------------------
+          cd /
+          rm -rf "$TEMP_DIR"
