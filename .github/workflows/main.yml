@@ -1,80 +1,65 @@
-name: Merge release into orphan new-main
+name: Merge release branch into Bitbucket main (squash)
 
 on:
   workflow_dispatch:
     inputs:
       release_branch:
-        description: 'Nome da branch de release (ex: release/vX.Y.Z)'
+        description: 'Nome da branch de release no GitHub'
         required: true
+        default: 'release'
 
 jobs:
   merge-release:
     runs-on: ubuntu-latest
 
+    env:
+      BITBUCKET_REPO: git@bitbucket.org:klayver-ximenes/teste-action.git
+      GIT_AUTHOR_NAME: github-actions[bot]
+      GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+
     steps:
-      - name: Checkout repositório
+      # ------------------------------------------------------------
+      # Checkout the GitHub repository
+      # ------------------------------------------------------------
+      - name: Checkout release branch from GitHub
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configurar Git
+      # ------------------------------------------------------------
+      # Clone the Bitbucket repo (main branch)
+      # ------------------------------------------------------------
+      - name: Clone Bitbucket repository
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git clone --branch main "$BITBUCKET_REPO" bitbucket_repo
+          cd bitbucket_repo
+          git config user.name "$GIT_AUTHOR_NAME"
+          git config user.email "$GIT_AUTHOR_EMAIL"
 
-      - name: Buscar todas as branches remotas
-        run: git fetch --all
-
-      - name: Garantir que a branch release existe
+      # ------------------------------------------------------------
+      # Copy contents from release (GitHub) to Bitbucket main
+      # ------------------------------------------------------------
+      - name: Copy release files into Bitbucket repo
         run: |
-          RELEASE_BRANCH=${{ github.event.inputs.release_branch }}
-          if ! git ls-remote --exit-code origin "$RELEASE_BRANCH" &>/dev/null; then
-            echo "❌ Branch $RELEASE_BRANCH não existe no remoto."
-            exit 1
-          fi
+          TEMP_DIR=$(mktemp -d)
 
-      - name: Preparar branch new-main (órfã se não existir)
-        run: |
-          RELEASE_BRANCH=${{ github.event.inputs.release_branch }}
+          # Copy GitHub code (release branch) to temp dir (clean copy)
+          rsync -av --exclude='.git' ./ "$TEMP_DIR/"
 
-          if git ls-remote --exit-code origin new-main &>/dev/null; then
-            echo "✅ Branch new-main existe. Fazendo checkout..."
-            git checkout new-main
-            git pull origin new-main
+          cd bitbucket_repo
+
+          # Copy everything into Bitbucket repo (replace files)
+          rsync -av --delete --exclude='.git' "$TEMP_DIR/" ./
+
+          # Check if there are differences to commit
+          if ! git diff --quiet; then
+            git add -A
+            COMMIT_MSG="Squash merge from '${{ github.event.inputs.release_branch }}' - $(date +'%Y-%m-%d %H:%M:%S')"
+            git commit -m "$COMMIT_MSG"
+            git push origin main
+            echo "✅ Successfully merged release into Bitbucket main."
           else
-            echo "🆕 Criando branch órfã new-main..."
-            git checkout --orphan new-main
-            git add .
-            git commit -m "Initial orphan branch new-main"
-            git push -u origin new-main
+            echo "✅ No changes to commit."
           fi
 
-      - name: Fazendo merge squash de ${{ env.RELEASE_BRANCH }} em new-main
-        run: |
-          RELEASE_BRANCH=${{ github.event.inputs.release_branch }}
-      
-          echo "➡️ Fazendo merge squash de $RELEASE_BRANCH em new-main"
-      
-          git fetch origin $RELEASE_BRANCH
-      
-          git checkout new-main
-      
-          # Tenta o merge squash
-          git merge --squash origin/$RELEASE_BRANCH --allow-unrelated-histories || true
-      
-          # Se houver conflitos, aceita tudo do branch de release (INCOMING)
-          if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
-            echo "⚠️ Conflitos detectados — aceitando tudo do incoming ($RELEASE_BRANCH)"
-            git checkout --theirs .
-            git add .
-          fi
-      
-          # Faz o commit e push
-          git commit -m "Squash merge from $RELEASE_BRANCH"
-          git push origin new-main
-
-      - name: Enviar alterações para o remoto
-        run: |
-          echo "🚀 Enviando atualizações para o remoto"
-          git push origin new-main
+          rm -rf "$TEMP_DIR"
