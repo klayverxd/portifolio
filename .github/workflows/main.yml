@@ -52,7 +52,7 @@ jobs:
 
       - name: Fazendo merge squash de ${{ env.RELEASE_BRANCH }} em new-main
         run: |
-          RELEASE_BRANCH=release/teste1
+          RELEASE_BRANCH=${{ github.event.inputs.release_branch }}
       
           echo "➡️ Fazendo merge squash de $RELEASE_BRANCH em new-main"
       
