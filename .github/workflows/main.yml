@@ -26,6 +26,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up SSH for the Bitbucket remote
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.BITBUCKET_SSH_PRIVATE_KEY }}
+        run: |
+          # Create the .ssh folder & set proper permissions
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          # Add Bitbucket to known_hosts (prevents host‑verification prompt)
+          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+
       # ------------------------------------------------------------
       # Clone the Bitbucket repo (main branch)
       # ------------------------------------------------------------
