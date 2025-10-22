@@ -26,8 +26,20 @@ jobs:
       - name: Buscar todas as branches
         run: git fetch --all
 
-      - name: Trocar para new-main
-        run: git checkout new-main || git checkout -b new-main origin/new-main
+      - name: Garantir que a branch new-main exista
+        run: |
+          if git show-ref --verify --quiet refs/heads/new-main; then
+            echo "✅ Branch new-main já existe localmente."
+            git checkout new-main
+          elif git ls-remote --exit-code origin new-main; then
+            echo "⬇️  Branch new-main existe no remoto, criando localmente..."
+            git fetch origin new-main:new-main
+            git checkout new-main
+          else
+            echo "🆕  Branch new-main não existe ainda. Criando nova branch."
+            git checkout -b new-main
+          fi
+
 
       - name: Atualizar new-main
         run: git pull origin new-main
