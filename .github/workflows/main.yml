@@ -26,23 +26,20 @@ jobs:
       - name: Buscar todas as branches
         run: git fetch --all
 
-      - name: Garantir que a branch new-main exista
+      - name: Verificar e criar new-main se não existir
         run: |
-          if git show-ref --verify --quiet refs/heads/new-main; then
-            echo "✅ Branch new-main já existe localmente."
+          RELEASE_BRANCH=${{ github.event.inputs.release_branch }}
+          echo "🌀 Release branch: $RELEASE_BRANCH"
+
+          if git ls-remote --exit-code origin new-main &> /dev/null; then
+            echo "✅ Branch new-main existe no remoto. Fazendo checkout..."
             git checkout new-main
-          elif git ls-remote --exit-code origin new-main; then
-            echo "⬇️  Branch new-main existe no remoto, criando localmente..."
-            git fetch origin new-main:new-main
-            git checkout new-main
+            git pull origin new-main
           else
-            echo "🆕  Branch new-main não existe ainda. Criando nova branch."
-            git checkout -b new-main
+            echo "🆕 Branch new-main não existe ainda. Criando a partir de $RELEASE_BRANCH..."
+            git fetch origin $RELEASE_BRANCH:$RELEASE_BRANCH
+            git checkout -b new-main $RELEASE_BRANCH
           fi
-
-
-      - name: Atualizar new-main
-        run: git pull origin new-main
 
       - name: Fazer merge squash da release
         run: |
