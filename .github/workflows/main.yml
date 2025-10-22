@@ -1,4 +1,4 @@
-name: Merge release into new-main
+name: Merge release into orphan new-main
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repositório
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # necessário para ter o histórico completo
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configurar Git
@@ -23,22 +23,33 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Buscar todas as branches
+      - name: Buscar todas as branches remotas
         run: git fetch --all
 
-      - name: Verificar e criar new-main se não existir
+      - name: Garantir que a branch release existe
         run: |
           RELEASE_BRANCH=${{ github.event.inputs.release_branch }}
-          echo "🌀 Release branch: $RELEASE_BRANCH"
+          if ! git ls-remote --exit-code origin "$RELEASE_BRANCH" &>/dev/null; then
+            echo "❌ Branch $RELEASE_BRANCH não existe no remoto."
+            exit 1
+          fi
 
-          if git ls-remote --exit-code origin new-main &> /dev/null; then
-            echo "✅ Branch new-main existe no remoto. Fazendo checkout..."
+      - name: Preparar branch new-main (órfã se não existir)
+        run: |
+          RELEASE_BRANCH=${{ github.event.inputs.release_branch }}
+
+          if git ls-remote --exit-code origin new-main &>/dev/null; then
+            echo "✅ Branch new-main existe. Fazendo checkout..."
             git checkout new-main
             git pull origin new-main
           else
-            echo "🆕 Branch new-main não existe ainda. Criando a partir de $RELEASE_BRANCH..."
-            git fetch origin $RELEASE_BRANCH:$RELEASE_BRANCH
-            git checkout -b new-main $RELEASE_BRANCH
+            echo "🆕 Criando branch órfã new-main..."
+            git checkout --orphan new-main
+            git rm -rf . || true
+            echo "# new-main (inicial órfã)" > README.md
+            git add README.md
+            git commit -m "Initial orphan branch new-main"
+            git push -u origin new-main
           fi
 
       - name: Fazer merge squash da release
@@ -46,9 +57,27 @@ jobs:
           RELEASE_BRANCH=${{ github.event.inputs.release_branch }}
           echo "➡️ Fazendo merge squash de $RELEASE_BRANCH em new-main"
           git fetch origin $RELEASE_BRANCH:$RELEASE_BRANCH
+
+          # Tenta fazer o merge squash
+          set +e
           git merge --squash --allow-unrelated-histories $RELEASE_BRANCH
-          git commit -m "Merge $RELEASE_BRANCH into new-main (squash)"
+          MERGE_EXIT_CODE=$?
+          set -e
+
+          # Se não houver alterações, finaliza silenciosamente
+          if [ $MERGE_EXIT_CODE -ne 0 ] && git diff --quiet; then
+            echo "✅ Nenhuma nova alteração para mergear. Nada a fazer."
+            exit 0
+          fi
+
+          # Commita o resultado
+          if ! git diff --quiet; then
+            git commit -m "Merge $RELEASE_BRANCH into new-main (squash)"
+          else
+            echo "⚠️ Nenhuma diferença detectada após o squash."
+          fi
 
       - name: Enviar alterações para o remoto
         run: |
+          echo "🚀 Enviando atualizações para o remoto"
           git push origin new-main
