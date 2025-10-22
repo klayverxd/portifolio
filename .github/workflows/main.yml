@@ -63,7 +63,7 @@ jobs:
           git checkout new-main
       
           # Tenta o merge squash
-          git merge --squash origin/$RELEASE_BRANCH || true
+          git merge --squash origin/$RELEASE_BRANCH --allow-unrelated-histories || true
       
           # Se houver conflitos, aceita tudo do branch de release (INCOMING)
           if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
