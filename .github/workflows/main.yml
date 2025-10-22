@@ -52,30 +52,29 @@ jobs:
             git push -u origin new-main
           fi
 
-      - name: Fazer merge squash da release
+      - name: Fazendo merge squash de ${{ env.RELEASE_BRANCH }} em new-main
         run: |
-          RELEASE_BRANCH=${{ github.event.inputs.release_branch }}
+          RELEASE_BRANCH=release/teste1
+      
           echo "➡️ Fazendo merge squash de $RELEASE_BRANCH em new-main"
-          git fetch origin $RELEASE_BRANCH:$RELEASE_BRANCH
-
-          # Tenta fazer o merge squash
-          set +e
-          git merge --squash --allow-unrelated-histories $RELEASE_BRANCH
-          MERGE_EXIT_CODE=$?
-          set -e
-
-          # Se não houver alterações, finaliza silenciosamente
-          if [ $MERGE_EXIT_CODE -ne 0 ] && git diff --quiet; then
-            echo "✅ Nenhuma nova alteração para mergear. Nada a fazer."
-            exit 0
+      
+          git fetch origin $RELEASE_BRANCH
+      
+          git checkout new-main
+      
+          # Tenta o merge squash
+          git merge --squash origin/$RELEASE_BRANCH || true
+      
+          # Se houver conflitos, aceita tudo do branch de release (INCOMING)
+          if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+            echo "⚠️ Conflitos detectados — aceitando tudo do incoming ($RELEASE_BRANCH)"
+            git checkout --theirs .
+            git add .
           fi
-
-          # Commita o resultado
-          if ! git diff --quiet; then
-            git commit -m "Merge $RELEASE_BRANCH into new-main (squash)"
-          else
-            echo "⚠️ Nenhuma diferença detectada após o squash."
-          fi
+      
+          # Faz o commit e push
+          git commit -m "Squash merge from $RELEASE_BRANCH"
+          git push origin new-main
 
       - name: Enviar alterações para o remoto
         run: |
