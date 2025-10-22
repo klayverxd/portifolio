@@ -54,16 +54,16 @@ jobs:
       - name: Copy release files into Bitbucket repo
         run: |
           TEMP_DIR=$(mktemp -d)
-
-          # Copy GitHub code (release branch) to temp dir (clean copy)
-          rsync -av --exclude='.git' ./ "$TEMP_DIR/"
-
+      
+          # Copy release branch (GitHub) to temp dir, ignore bitbucket_repo
+          rsync -av --exclude='.git' --exclude='bitbucket_repo' ./ "$TEMP_DIR/"
+      
           cd bitbucket_repo
-
-          # Copy everything into Bitbucket repo (replace files)
-          rsync -av --delete --exclude='.git' "$TEMP_DIR/" ./
-
-          # Check if there are differences to commit
+      
+          # Copy everything from TEMP_DIR into Bitbucket repo
+          rsync -av --delete "$TEMP_DIR/" ./
+      
+          # Commit if changes exist
           if ! git diff --quiet; then
             git add -A
             COMMIT_MSG="Squash merge from '${{ github.event.inputs.release_branch }}' - $(date +'%Y-%m-%d %H:%M:%S')"
@@ -73,5 +73,6 @@ jobs:
           else
             echo "✅ No changes to commit."
           fi
-
+      
           rm -rf "$TEMP_DIR"
+
