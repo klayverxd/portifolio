@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       release_branch:
-        description: 'Nome da branch de release no GitHub'
+        description: 'Name of the release branch on GitHub'
         required: true
         default: 'release'
 
@@ -19,27 +19,28 @@ jobs:
 
     steps:
       # ------------------------------------------------------------
-      # Checkout the GitHub repository
+      # 1️⃣ Checkout the release branch from GitHub
       # ------------------------------------------------------------
       - name: Checkout release branch from GitHub
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.inputs.release_branch }}
 
-      - name: Set up SSH for the Bitbucket remote
+      # ------------------------------------------------------------
+      # 2️⃣ Set up SSH for Bitbucket
+      # ------------------------------------------------------------
+      - name: Set up SSH for Bitbucket
         env:
           SSH_PRIVATE_KEY: ${{ secrets.BITBUCKET_SSH_PRIVATE_KEY }}
         run: |
-          # Create the .ssh folder & set proper permissions
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
-          # Add Bitbucket to known_hosts (prevents host‑verification prompt)
           ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
 
       # ------------------------------------------------------------
-      # Clone the Bitbucket repo (main branch)
+      # 3️⃣ Clone the Bitbucket main branch
       # ------------------------------------------------------------
       - name: Clone Bitbucket repository
         run: |
@@ -49,23 +50,29 @@ jobs:
           git config user.email "$GIT_AUTHOR_EMAIL"
 
       # ------------------------------------------------------------
-      # Copy contents from release (GitHub) to Bitbucket main
+      # 4️⃣ Copy release files into Bitbucket repository
       # ------------------------------------------------------------
-      - name: Copy release files into Bitbucket repo
+      - name: Merge release into Bitbucket main
         run: |
-          TEMP_DIR=$(mktemp -d)
-      
-          # Copy release branch (GitHub) to temp dir, ignore bitbucket_repo
-          rsync -av --exclude='.git' --exclude='bitbucket_repo' ./ "$TEMP_DIR/"
-      
+          # Create temporary directory for release files
+          RELEASE_TEMP=$(mktemp -d)
+
+          # Copy GitHub release files to temp directory
+          rsync -av --exclude='.git' ./ "$RELEASE_TEMP/"
+
+          # Enter the Bitbucket clone
           cd bitbucket_repo
-      
-          # Copy everything from TEMP_DIR into Bitbucket repo
-          rsync -av --delete "$TEMP_DIR/" ./
-      
-          # Commit if changes exist
-          if ! git diff --quiet; then
-            git add -A
+
+          # Replace files in Bitbucket main with release content
+          rsync -av --delete "$RELEASE_TEMP/" ./
+
+          # Debug: show status and changed files
+          git status
+          git diff --name-only
+
+          # Commit and push if there are changes
+          git add -A
+          if ! git diff --cached --quiet; then
             COMMIT_MSG="Squash merge from '${{ github.event.inputs.release_branch }}' - $(date +'%Y-%m-%d %H:%M:%S')"
             git commit -m "$COMMIT_MSG"
             git push origin main
@@ -73,6 +80,6 @@ jobs:
           else
             echo "✅ No changes to commit."
           fi
-      
-          rm -rf "$TEMP_DIR"
 
+          # Clean up temporary directory
+          rm -rf "$RELEASE_TEMP"
