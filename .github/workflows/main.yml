@@ -35,17 +35,6 @@ jobs:
           ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
 
       # ------------------------------------------------------------
-      # 3️⃣ Clone the Bitbucket main branch
-      # ------------------------------------------------------------
-      - name: Clone Bitbucket repository
-        env:
-          BITBUCKET_REPO: git@bitbucket.org:klayver-ximenes/teste-action.git
-        run: |
-          # Remove any existing clone (to avoid nested folders)
-          rm -rf bitbucket_repo
-          git clone --branch main "$BITBUCKET_REPO" bitbucket_repo
-
-      # ------------------------------------------------------------
       # 4️⃣ Copy release files into Bitbucket repository
       # ------------------------------------------------------------
       - name: Merge release into Bitbucket main
@@ -60,6 +49,8 @@ jobs:
 
           echo "✅ STEP 2"
 
+          git clone --branch main git@bitbucket.org:klayver-ximenes/teste-action.git bitbucket_repo
+          
           # Enter the Bitbucket clone
           cd bitbucket_repo
 
