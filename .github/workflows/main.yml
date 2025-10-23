@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       release_branch:
-        description: 'Name of the release branch on GitHub'
+        description: 'Name of the release branch on GitHub (release/vX.Y.Z)'
         required: true
-        default: 'release'
+        default: 'release/'
 
 jobs:
   merge-release:
@@ -35,51 +35,36 @@ jobs:
           ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
 
       # ------------------------------------------------------------
-      # 4️⃣ Copy release files into Bitbucket repository
+      # 3️⃣ Copy release files into Bitbucket repository
       # ------------------------------------------------------------
       - name: Merge release into Bitbucket main
         run: |
           # Create temporary directory for release files
           RELEASE_TEMP=$(mktemp -d)
 
-          echo "✅ STEP 1"
-
-          # Copy GitHub release files to temp directory
+          # Copy all files from the current GitHub release branch (excluding .git)
           rsync -av --exclude='.git' ./ "$RELEASE_TEMP/"
 
-          echo "✅ STEP 2"
-
+          # Clone Bitbucket main branch
           git clone --branch main git@bitbucket.org:klayver-ximenes/teste-action.git bitbucket_repo
           
           # Enter the Bitbucket clone
           cd bitbucket_repo
 
-          # Set Git identity
+          # Configure Git identity for the commit
           git config user.name "Klayver-Action"
           git config user.email "klayverx@gmail.com"
 
-          echo "✅ STEP 3"
-
-          # Replace files in Bitbucket main with release content
+          # Replace files in Bitbucket main with release content (preserving .git folder)
           rsync -av --delete --exclude='.git' "$RELEASE_TEMP/" ./
 
-          echo "✅ STEP 4"
-
-          # Debug: show status and changed files
-          git status
-          git diff --name-only
-
-          echo "✅ STEP 5"
-
-          # Commit and push if there are changes
+          # Stage all changes
           git add -A
 
-          echo "✅ STEP 6"
+          # Commit and push only if there are actual changes
           if ! git diff --cached --quiet; then
-            echo "✅ STEP 7"
-            COMMIT_MSG="Squash merge from '${{ github.event.inputs.release_branch }}' - $(date +'%Y-%m-%d %H:%M:%S')"
+            COMMIT_MSG="merge from '${{ github.event.inputs.release_branch }}' - $(date +'%Y-%m-%d %H:%M:%S')"
             git commit -m "$COMMIT_MSG"
-            echo "✅ STEP 8"
             git push origin main
             echo "✅ Successfully merged release into Bitbucket main."
           else
