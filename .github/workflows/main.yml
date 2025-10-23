@@ -42,6 +42,22 @@ jobs:
       # ------------------------------------------------------------
       - name: Merge release into Bitbucket main
         run: |
+          # Remove the files you don't want to push
+          rm -rf ./aplicativo/logcsh.txt
+          rm -rf ./aplicativo/mv_apk
+          rm -rf ./aplicativo/push-foreground-ios.txt
+          rm -rf ./aplicativo/ios-release.bundle
+          rm -rf ./aplicativo/ios-release.bundle.map
+          rm -rf ./aplicativo/android-release.bundle
+          rm -rf ./aplicativo/android-release.bundle.map
+          rm -rf ./aplicativo/android_build
+          rm -rf ./aplicativo/generate-app-hash.sh
+          rm -rf ./aplicativo/generate_app_hash_to_otp
+          rm -rf ./aplicativo/patches
+          rm -rf ./aplicativo/ios/BackgroundFetchManager.h
+          rm -rf ./aplicativo/ios/BackgroundFetchManager.m
+          rm -rf ./aplicativo/ios/Podfile.old
+        
           # Create temporary directory for release files
           RELEASE_TEMP=$(mktemp -d)
 
