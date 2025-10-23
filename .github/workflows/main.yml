@@ -12,11 +12,6 @@ jobs:
   merge-release:
     runs-on: ubuntu-latest
 
-    env:
-      BITBUCKET_REPO: git@bitbucket.org:klayver-ximenes/teste-action.git
-      GIT_AUTHOR_NAME: github-actions[bot]
-      GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
-
     steps:
       # ------------------------------------------------------------
       # 1️⃣ Checkout the release branch from GitHub
@@ -43,6 +38,8 @@ jobs:
       # 3️⃣ Clone the Bitbucket main branch
       # ------------------------------------------------------------
       - name: Clone Bitbucket repository
+        env:
+          BITBUCKET_REPO: git@bitbucket.org:klayver-ximenes/teste-action.git
         run: |
           git clone --branch main "$BITBUCKET_REPO" bitbucket_repo
 
@@ -50,6 +47,10 @@ jobs:
       # 4️⃣ Copy release files into Bitbucket repository
       # ------------------------------------------------------------
       - name: Merge release into Bitbucket main
+        env:
+          BITBUCKET_REPO: git@bitbucket.org:klayver-ximenes/teste-action.git
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
         run: |
           # Create temporary directory for release files
           RELEASE_TEMP=$(mktemp -d)
