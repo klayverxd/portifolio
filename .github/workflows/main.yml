@@ -57,24 +57,38 @@ jobs:
           # Create temporary directory for release files
           RELEASE_TEMP=$(mktemp -d)
 
+          echo "✅ STEP 1"
+
           # Copy GitHub release files to temp directory
           rsync -av --exclude='.git' ./ "$RELEASE_TEMP/"
+
+          echo "✅ STEP 2"
 
           # Enter the Bitbucket clone
           cd bitbucket_repo
 
+          echo "✅ STEP 3"
+
           # Replace files in Bitbucket main with release content
           rsync -av --delete "$RELEASE_TEMP/" ./
+
+          echo "✅ STEP 4"
 
           # Debug: show status and changed files
           git status
           git diff --name-only
 
+          echo "✅ STEP 5"
+
           # Commit and push if there are changes
           git add -A
+
+          echo "✅ STEP 6"
           if ! git diff --cached --quiet; then
+            echo "✅ STEP 7"
             COMMIT_MSG="Squash merge from '${{ github.event.inputs.release_branch }}' - $(date +'%Y-%m-%d %H:%M:%S')"
             git commit -m "$COMMIT_MSG"
+            echo "✅ STEP 8"
             git push origin main
             echo "✅ Successfully merged release into Bitbucket main."
           else
