@@ -50,7 +50,7 @@ jobs:
         env:
           BITBUCKET_REPO: git@bitbucket.org:klayver-ximenes/teste-action.git
           GIT_AUTHOR_NAME: github-actions[bot]
-          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+          GIT_AUTHOR_EMAIL: "klayverx@gmail.com"
         run: |
           # Create temporary directory for release files
           RELEASE_TEMP=$(mktemp -d)
