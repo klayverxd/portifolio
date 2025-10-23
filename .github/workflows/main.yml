@@ -68,7 +68,7 @@ jobs:
           echo "✅ STEP 3"
 
           # Replace files in Bitbucket main with release content
-          rsync -av --delete "$RELEASE_TEMP/" ./
+          rsync -av --delete --exclude='.git' "$RELEASE_TEMP/" ./
 
           echo "✅ STEP 4"
 
