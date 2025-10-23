@@ -41,6 +41,8 @@ jobs:
         env:
           BITBUCKET_REPO: git@bitbucket.org:klayver-ximenes/teste-action.git
         run: |
+          # Remove any existing clone (to avoid nested folders)
+          rm -rf bitbucket_repo
           git clone --branch main "$BITBUCKET_REPO" bitbucket_repo
 
       # ------------------------------------------------------------
